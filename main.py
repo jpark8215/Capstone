@@ -1,4 +1,4 @@
-# import pandas
+# import
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -63,10 +63,8 @@ n_obs = df_all.shape[0]
 
 (df_all['h1n1_vaccine'].value_counts().div(n_obs).plot.barh(title="Proportion of H1N1 Vaccine", ax=ax[0]))
 ax[0].set_ylabel("h1n1_vaccine")
-
 (df_all['seasonal_vaccine'].value_counts().div(n_obs).plot.barh(title="Proportion of Seasonal Vaccine", ax=ax[1]))
 ax[1].set_ylabel("seasonal_vaccine")
-
 fig.tight_layout()
 plt.show()
 
@@ -100,35 +98,35 @@ feature_cols = ["h1n1_concern",
                 "marital_status",
                 "rent_or_own",
                 "employment_status",
-                "hhs_geo_region",
+                # "hhs_geo_region",
                 "census_msa",
                 "household_adults",
                 "household_children",
-                "employment_industry",
-                "employment_occupation"
+                # "employment_industry",
+                # "employment_occupation"
                 ]
 
 # # fill df_all NAN value with a 0
 # df_all.fillna(value="0", inplace=True)
 
-# count of observations for each combination of  two variables
+# count of observations for each combination of two variables
 counts = (
     df_all[['h1n1_concern', 'h1n1_vaccine']].groupby(['h1n1_concern', 'h1n1_vaccine']).size().unstack('h1n1_vaccine'))
-ax = counts.plot.barh()
-ax.invert_yaxis()
-ax.set_xlabel('number of h1n1_vaccine')
-ax.legend(loc='best', title='h1n1_vaccine')
-plt.show()
+# ax = counts.plot.barh()
+# ax.invert_yaxis()
+# ax.set_xlabel('number of h1n1_vaccine')
+# ax.legend(loc='best', title='h1n1_vaccine')
+# plt.show()
 
 # rate of vaccination for each level of h1n1_concern
 # stacked
 h1n1_concern_counts = counts.sum(axis='columns')
 props = counts.div(h1n1_concern_counts, axis='index')
-ax = props.plot.barh()
-ax.invert_yaxis()
-ax.set_xlabel('rate of h1n1_vaccine')
-ax.legend(loc='best', title='h1n1_vaccine')
-plt.show()
+# ax = props.plot.barh()
+# ax.invert_yaxis()
+# ax.set_xlabel('rate of h1n1_vaccine')
+# ax.legend(loc='best', title='h1n1_vaccine')
+# plt.show()
 
 # rate of vaccination for each level of h1n1_concern
 # side by side
@@ -176,6 +174,28 @@ plt.show()
 # set a random seed for reproducibility
 RANDOM_SEED = 6
 
+# non-numeric value processing
+# process object values
+# replacing values
+df1['age_group'].replace(['18 - 34 Years', '35 - 44 Years', '45 - 54 Years', '55 - 64 Years', '65+ Years'],
+                         [0, 1, 2, 3, 4], inplace=True)
+
+df1['education'].replace(['< 12 Years', '12 Years', 'Some College', 'College Graduate'], [0, 1, 2, 3], inplace=True)
+
+df1['race'].replace(['White', 'Black', 'Hispanic', 'Other or Multiple'], [0, 1, 2, 3], inplace=True)
+
+df1['sex'].replace(['Male', 'Female'], [0, 1], inplace=True)
+
+df1['income_poverty'].replace(['Below Poverty', '<= $75,000, Above Poverty', '> $75,000'], [0, 1, 2], inplace=True)
+
+df1['marital_status'].replace(['Not Married', 'Married'], [0, 1], inplace=True)
+
+df1['rent_or_own'].replace(['Rent', 'Own'], [0, 1], inplace=True)
+
+df1['employment_status'].replace(['Not in Labor Force', 'Unemployed', 'Employed'], [0, 1, 2], inplace=True)
+
+df1['census_msa'].replace(['Non-MSA', 'MSA, Not Principle  City', 'MSA, Principle City'], [0, 1, 2], inplace=True)
+
 # process numeric values
 numeric_cols = df1.columns[df1.dtypes != "object"].values
 
@@ -196,9 +216,6 @@ estimators = MultiOutputClassifier(estimator=LogisticRegression(penalty="l2", C=
 
 full_pipeline = Pipeline([("preprocessor", preprocessor), ("estimators", estimators)])
 
-# non-numeric value processing
-
-
 # split data
 X_train, X_eval, y_train, y_eval = train_test_split(
     df1,
@@ -217,8 +234,8 @@ eval_predict = full_pipeline.predict_proba(X_eval)
 
 train_predict = pd.DataFrame({"h1n1_vaccine": eval_predict[0][:, 1], "seasonal_vaccine": eval_predict[1][:, 1]},
                              index=y_eval.index)
-print("y_predict:", train_predict)
 train_predict.head()
+print("TS predict:", train_predict)
 
 
 # AUC - ROC curve is a performance measurement for the classification problems at various threshold settings
@@ -245,8 +262,32 @@ full_pipeline.fit(df1, df2)
 
 # test on test set
 test_features_df = pd.read_csv("test_set_features.csv", index_col="respondent_id")
+
+# replacing values for test set
+test_features_df['age_group'].replace(['18 - 34 Years', '35 - 44 Years', '45 - 54 Years', '55 - 64 Years', '65+ Years'],
+                                      [0, 1, 2, 3, 4], inplace=True)
+
+test_features_df['education'].replace(['< 12 Years', '12 Years', 'Some College', 'College Graduate'], [0, 1, 2, 3],
+                                      inplace=True)
+
+test_features_df['race'].replace(['White', 'Black', 'Hispanic', 'Other or Multiple'], [0, 1, 2, 3], inplace=True)
+
+test_features_df['sex'].replace(['Male', 'Female'], [0, 1], inplace=True)
+
+test_features_df['income_poverty'].replace(['Below Poverty', '<= $75,000, Above Poverty', '> $75,000'], [0, 1, 2],
+                                           inplace=True)
+
+test_features_df['marital_status'].replace(['Not Married', 'Married'], [0, 1], inplace=True)
+
+test_features_df['rent_or_own'].replace(['Rent', 'Own'], [0, 1], inplace=True)
+
+test_features_df['employment_status'].replace(['Not in Labor Force', 'Unemployed', 'Employed'], [0, 1, 2], inplace=True)
+
+test_features_df['census_msa'].replace(['Non-MSA', 'MSA, Not Principle  City', 'MSA, Principle City'], [0, 1, 2],
+                                       inplace=True)
+
 test_predict = full_pipeline.predict_proba(test_features_df)
 
 y_test_predict = pd.DataFrame({"h1n1_vaccine": test_predict[0][:, 1], "seasonal_vaccine": test_predict[1][:, 1]},
                               index=test_features_df.index)
-print("final:", y_test_predict)
+print("Final:", y_test_predict)
