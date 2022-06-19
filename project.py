@@ -1,5 +1,6 @@
 # import
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -229,3 +230,10 @@ test_predict_set = pd.DataFrame({"h1n1_vaccine": test_predict[0][:, 1], "seasona
                                 index=test_features_df.index)
 test_predict_set["h1n1_vaccine"] = test_predict_set["h1n1_vaccine"].round(0)
 test_predict_set["seasonal_vaccine"] = test_predict_set["seasonal_vaccine"].round(0)
+
+
+# individual search
+def search_participant(index):
+    result = test_predict_set.loc[[index]]
+
+    print(result, "\n", "1.0 = WILL VACCINATE ::: 0.0 = WILL NOT VACCINATE", "\n")

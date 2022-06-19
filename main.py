@@ -86,5 +86,4 @@ while True:
         # test set prediction
         print(project.test_predict_set)
 
-        while True:
-            selected = input("Please enter the participant's id you would like to look up (26707 - 53414): ")
+        project.search_participant(int(input("Please enter the participant's id you would like to look up (26707 - 53414): ")))
