@@ -1,6 +1,5 @@
 # import
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -59,16 +58,16 @@ df2 = pd.read_csv('training_set_labels.csv', index_col="respondent_id")
 df_all = df1.merge(df2, how="left", on="respondent_id")
 
 
-# distribution of the two target variables
+# distribution of h1n1 vaccine and seasonal vaccine status
 # display in horizontal graphs
 def vac_rate():
     fig, ax = plt.subplots(2, 1)
     n_obs = df_all.shape[0]
 
     (df_all['h1n1_vaccine'].value_counts().div(n_obs).plot.barh(title="Proportion of H1N1 Vaccine", ax=ax[0]))
-    ax[0].set_ylabel("h1n1_vaccine")
+    ax[0].set_ylabel("H1N1 Vaccine")
     (df_all['seasonal_vaccine'].value_counts().div(n_obs).plot.barh(title="Proportion of Seasonal Vaccine", ax=ax[1]))
-    ax[1].set_ylabel("seasonal_vaccine")
+    ax[1].set_ylabel("Seasonal Vaccine")
     fig.tight_layout()
     plt.show()
 
@@ -199,7 +198,7 @@ def plot_roc(y_true, y_score, label_name, ax):
     ax.plot([0, 1], [0, 1], color='grey', linestyle='--')
     ax.set_ylabel('TPR')
     ax.set_xlabel('FPR')
-    ax.set_title(f"{label_name}: AUC = {roc_auc_score(y_true, y_score):.4f}")
+    ax.set_title(f"{label_name} AUC = {roc_auc_score(y_true, y_score):.4f}")
 
 
 # retain model with full training set
@@ -237,3 +236,19 @@ def search_participant(index):
     result = test_predict_set.loc[[index]]
 
     print(result, "\n", "1.0 = WILL VACCINATE ::: 0.0 = WILL NOT VACCINATE", "\n")
+
+
+def test_set():
+    fig, ax = plt.subplots(1, 2)
+    n_obs = test_predict_set.shape[0]
+
+    (test_predict_set['h1n1_vaccine'].value_counts().div(n_obs).plot(kind='pie', title="Expected H1N1 Vaccine rate",
+                                                                     ax=ax[0]))
+    ax[0].legend(loc='lower center')
+
+    (test_predict_set['seasonal_vaccine'].value_counts().div(n_obs).plot(kind='pie',
+                                                                         title="Expected Seasonal Vaccine rate",
+                                                                         ax=ax[1]))
+    ax[1].legend(loc='lower center')
+    fig.tight_layout()
+    plt.show()

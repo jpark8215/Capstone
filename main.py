@@ -6,9 +6,9 @@ import project
 
 while True:
 
-    print("1> View graphics")
+    print("1> View graphs")
     print("2> Training set performance")
-    print("3> Prediction on test set")
+    print("3> PREDICTION on test set")
     print("0> Exit Application\n")
 
     selected = input("Please enter an option above: ")
@@ -20,12 +20,12 @@ while True:
     if selected == '1':
         print("Hello. Welcome to vaccine predictor! \n"
               "* The following three charts show vaccine status of population we gathered data from. \n"
-              "* The first chart will show you the proportion of vaccine status based on the total population. \n"
-              "0 means no vaccine received and 1 means vaccine received. \n"
+              "* The first chart will show you the proportion of vaccine status on the training population. \n"
+              "  0 means no vaccine received and 1 means vaccine received. \n"
               "* The second chart will show you the H1N1 vaccine status based on the concerns. \n"
-              "0 means no vaccine received or has no concerns. And 1 means vaccine received or has concerns. \n"
+              "  0 means no vaccine received or has no concerns. And 1 means vaccine received or has concerns. \n"
               "* The third chart will show the H1N1 and seasonal flu vaccine status based on opinion on vaccine. \n"
-              "0 means no vaccine received or negative opinion. And 1 means vaccine received or positive opinion.")
+              "  0 means no vaccine received or negative opinion. And 1 means vaccine received or positive opinion.")
 
         # first chart
         project.vac_rate()
@@ -52,12 +52,12 @@ while True:
 
     # option 2
     if selected == '2':
-        print("*The chart will show you AUC-ROC curve for H1N1 and seasonal flu vaccine prediction on training set. \n"
+        print("* The chart will show you AUC-ROC curve for H1N1 and seasonal flu vaccine prediction on training set. \n"
               "AUC - ROC curve is a classification problem performance measurement. \n"
               "AOC is the area under the ROC curve, which is probability \n"
               "that a randomly chosen positive case is ranked higher than a randomly chosen negative case. \n"
               "ROC is calculated by the true positive rate (TPR) against the false positive rate (FPR).\n"
-              "*The accuracy score on training set is as shown below. \n")
+              "* The accuracy score on training set is as shown below. \n")
         # accuracy score of training set
         project.full_pipeline.fit(project.df1, project.df2)
 
@@ -84,6 +84,11 @@ while True:
     # option 3
     if selected == '3':
         # test set prediction
-        print(project.test_predict_set)
+        # print(project.test_predict_set)
 
-        project.search_participant(int(input("Please enter the participant's id you would like to look up (26707 - 53414): ")))
+        project.test_set()
+        print("* The chart shows you the vaccination status proportion of the test set population. \n "
+              "  0 means no vaccine received and 1 means vaccine received. \n")
+
+        project.search_participant(
+            int(input("Please enter the participant's id you would like to look up (26707 - 53414): ")))
