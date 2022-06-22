@@ -1,6 +1,7 @@
 # import
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
@@ -135,7 +136,7 @@ def vac_rate_concern():
 def vac_rate_op(col, target, df_all, ax=None):
     # col: column name of feature variable
     # target: column name of target variable
-    # df: dataframe that contains columns `col` and `target`
+    # df_all: dataframe that contains columns `col` and `target`
 
     feature_counts = (df_all[[target, col]].groupby([target, col]).size().unstack(target))
     group_counts = feature_counts.sum(axis='columns')
@@ -162,21 +163,19 @@ df1['rent_or_own'].replace(['Rent', 'Own'], [0, 1], inplace=True)
 df1['employment_status'].replace(['Not in Labor Force', 'Unemployed', 'Employed'], [0, 1, 2], inplace=True)
 df1['census_msa'].replace(['Non-MSA', 'MSA, Not Principle  City', 'MSA, Principle City'], [0, 1, 2], inplace=True)
 
+
 # process numeric values
 numeric_cols = df1.columns[df1.dtypes != "object"].values
 
 # chain preprocessing into a pipeline object into a tuple of (numeric value, sklearn transformer)
 # Z-score scaling scales and shifts features so that they have zero mean and unit variance
 # NA mean imputation fills missing values with the mean value of the training set
-numeric_preprocessing_steps = Pipeline(
-    [('standard_scaler', StandardScaler()), ('simple_imputer', SimpleImputer(strategy='mean'))])
-
-preprocessor = ColumnTransformer(transformers=
-                                 [("numeric", numeric_preprocessing_steps, numeric_cols)], remainder="drop")
-
+data_process = Pipeline([('Z-score scaling', StandardScaler()), ('simple_imputer', SimpleImputer(strategy='mean'))])
+transformer = ColumnTransformer(transformers=[("numeric", data_process, numeric_cols)], remainder="drop")
 estimators = MultiOutputClassifier(estimator=LogisticRegression(penalty="l2", C=1))
 
-full_pipeline = Pipeline([("preprocessor", preprocessor), ("estimators", estimators)])
+full_pipeline = Pipeline([("preprocessor", transformer), ("estimators", estimators)])
+
 
 # split data
 X_train, X_eval, y_train, y_eval = train_test_split(df1, df2, test_size=0.25, shuffle=True, stratify=df2,
@@ -191,14 +190,18 @@ eval_predict_set = pd.DataFrame({"h1n1_vaccine": eval_predict[0][:, 1], "seasona
                                 index=y_eval.index)
 
 
+sns.pairplot(data=df1, diag_kind='kde')
+plt.show()
+
+
 # AUC - ROC curve
-def plot_roc(y_true, y_score, label_name, ax):
+def plot_roc(y_true, y_score, label, ax):
     fpr, tpr, thresholds = roc_curve(y_true, y_score)
     ax.plot(fpr, tpr)
-    ax.plot([0, 1], [0, 1], color='grey', linestyle='--')
+    ax.plot([0, 1], [0, 1], color='black', linestyle='--')
     ax.set_ylabel('TPR')
     ax.set_xlabel('FPR')
-    ax.set_title(f"{label_name} AUC = {roc_auc_score(y_true, y_score):.4f}")
+    ax.set_title(f"{label} AUC = {roc_auc_score(y_true, y_score):.2f}")
 
 
 # retain model with full training set
@@ -235,7 +238,7 @@ test_predict_set["seasonal_vaccine"] = test_predict_set["seasonal_vaccine"].roun
 def search_participant(index):
     result = test_predict_set.loc[[index]]
 
-    print(result, "\n", "1.0 = WILL VACCINATE ::: 0.0 = WILL NOT VACCINATE", "\n")
+    print(result, "\n", "1.0 = WILL Likely VACCINATE : 0.0 = WILL Likely NOT Vaccinate", "\n")
 
 
 def test_set():
@@ -244,11 +247,11 @@ def test_set():
 
     (test_predict_set['h1n1_vaccine'].value_counts().div(n_obs).plot(kind='pie', title="Expected H1N1 Vaccine rate",
                                                                      ax=ax[0]))
-    ax[0].legend(loc='lower center')
+    ax[0].legend(loc='best')
 
     (test_predict_set['seasonal_vaccine'].value_counts().div(n_obs).plot(kind='pie',
                                                                          title="Expected Seasonal Vaccine rate",
                                                                          ax=ax[1]))
-    ax[1].legend(loc='lower center')
+    ax[1].legend(loc='best')
     fig.tight_layout()
     plt.show()

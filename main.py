@@ -1,6 +1,6 @@
 import sys
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 import project
 
@@ -25,7 +25,7 @@ while True:
               "* The second chart will show you the H1N1 vaccine status based on the concerns. \n"
               "  0 means no vaccine received or has no concerns. And 1 means vaccine received or has concerns. \n"
               "* The third chart will show the H1N1 and seasonal flu vaccine status based on opinion on vaccine. \n"
-              "  0 means no vaccine received or negative opinion. And 1 means vaccine received or positive opinion.")
+              "  0 means no vaccine received or negative opinion. And 1 means vaccine received or positive opinion. \n")
 
         # first chart
         project.vac_rate()
@@ -70,9 +70,14 @@ while True:
         predict_data["seasonal_vaccine"] = predict_data["seasonal_vaccine"].round(0)
 
         print("Accuracy Score:", (accuracy_score(org_data, predict_data) * 100).__round__(2), "%\n")
+        print("H1N1 Vaccine Accuracy Score:",
+              (accuracy_score(org_data["h1n1_vaccine"], predict_data["h1n1_vaccine"]) * 100).__round__(2), "%\n")
+        print("Seasonal Vaccine Accuracy Score:",
+              (accuracy_score(org_data["seasonal_vaccine"], predict_data["seasonal_vaccine"]) * 100).__round__(2),
+              "%\n")
 
         # auc-roc curve chart for training set
-        fig, ax = plt.subplots(1, 2, figsize=(7, 3.5))
+        fig, ax = plt.subplots(1, 2, figsize=(6, 3))
 
         project.plot_roc(project.y_eval['h1n1_vaccine'], project.eval_predict_set['h1n1_vaccine'],
                          'h1n1_vaccine', ax=ax[0])
@@ -84,11 +89,11 @@ while True:
     # option 3
     if selected == '3':
         # test set prediction
-        # print(project.test_predict_set)
+        print(project.test_predict_set)
 
-        project.test_set()
         print("* The chart shows you the vaccination status proportion of the test set population. \n "
               "  0 means no vaccine received and 1 means vaccine received. \n")
+        project.test_set()
 
         project.search_participant(
-            int(input("Please enter the participant's id you would like to look up (26707 - 53414): ")))
+            int(input("Please enter the participant's id you would like to look up between 26707 and 53414: ")))
