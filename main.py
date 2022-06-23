@@ -71,7 +71,7 @@ while True:
 
         print("Accuracy Score:", (accuracy_score(org_data, predict_data) * 100).__round__(2), "%\n")
         print("H1N1 Vaccine Accuracy Score:",
-              (accuracy_score(org_data["h1n1_vaccine"], predict_data["h1n1_vaccine"]) * 100).__round__(2), "%\n")
+              (accuracy_score(org_data["h1n1_vaccine"], predict_data["h1n1_vaccine"]) * 100).__round__(2), "%")
         print("Seasonal Vaccine Accuracy Score:",
               (accuracy_score(org_data["seasonal_vaccine"], predict_data["seasonal_vaccine"]) * 100).__round__(2),
               "%\n")

@@ -124,9 +124,8 @@ def vac_rate_concern():
     props = h1n1_counts.div(h1n1_concern_counts, axis='index')
 
     # rate of vaccination for each level of h1n1_concern
-    ax = props.plot.barh(title="Rate of H1N1 Vaccine")
-    ax.invert_yaxis()
-    ax.set_xlabel('H1N1 vaccine rate')
+    ax = props.plot.bar(title="Rate of H1N1 Vaccine")
+    ax.set_xlabel('H1N1 concern')
     ax.legend(loc='best', title='H1N1 vaccine')
     plt.show()
 
@@ -149,7 +148,7 @@ def vac_rate_op(col, target, df_all, ax=None):
 
 # train model using logistic regression
 # set a random seed for reproducibility
-RANDOM_SEED = 15
+RANDOM = 15
 
 # replace non-numeric object values into numeric values
 df1['age_group'].replace(['18 - 34 Years', '35 - 44 Years', '45 - 54 Years', '55 - 64 Years', '65+ Years'],
@@ -179,7 +178,7 @@ full_pipeline = Pipeline([("preprocessor", transformer), ("estimators", estimato
 
 # split data
 X_train, X_eval, y_train, y_eval = train_test_split(df1, df2, test_size=0.25, shuffle=True, stratify=df2,
-                                                    random_state=RANDOM_SEED)
+                                                    random_state=RANDOM)
 
 # train model with split data
 full_pipeline.fit(X_train, y_train)
@@ -190,8 +189,10 @@ eval_predict_set = pd.DataFrame({"h1n1_vaccine": eval_predict[0][:, 1], "seasona
                                 index=y_eval.index)
 
 
-sns.pairplot(data=df1, diag_kind='kde')
-plt.show()
+# heatmap for correlation and pairplot for distribution
+# sns.heatmap(df1[['age_group', 'education', 'race', 'sex']].corr(), cmap='Blues', annot=True)
+# sns.pairplot(data=df1, diag_kind='kde')
+# plt.show()
 
 
 # AUC - ROC curve
