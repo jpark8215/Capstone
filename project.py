@@ -160,8 +160,10 @@ df1['income_poverty'].replace(['Below Poverty', '<= $75,000, Above Poverty', '> 
 df1['marital_status'].replace(['Not Married', 'Married'], [0, 1], inplace=True)
 df1['rent_or_own'].replace(['Rent', 'Own'], [0, 1], inplace=True)
 df1['employment_status'].replace(['Not in Labor Force', 'Unemployed', 'Employed'], [0, 1, 2], inplace=True)
+# df1['hhs_geo_region'].replace(
+#     ['atmpeygn', 'bhuqouqj', 'dqpwygqj', 'fpwskwrf', 'kbazzjca', 'lrircsnp', 'lzgpxyit', 'mlyzmhmf', 'oxchjgsf',
+#      'qufhixun'], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], inplace=True)
 df1['census_msa'].replace(['Non-MSA', 'MSA, Not Principle  City', 'MSA, Principle City'], [0, 1, 2], inplace=True)
-
 
 # process numeric values
 numeric_cols = df1.columns[df1.dtypes != "object"].values
@@ -174,7 +176,6 @@ transformer = ColumnTransformer(transformers=[("numeric", data_process, numeric_
 estimators = MultiOutputClassifier(estimator=LogisticRegression(penalty="l2", C=1))
 
 full_pipeline = Pipeline([("preprocessor", transformer), ("estimators", estimators)])
-
 
 # split data
 X_train, X_eval, y_train, y_eval = train_test_split(df1, df2, test_size=0.25, shuffle=True, stratify=df2,
@@ -223,6 +224,9 @@ test_features_df['income_poverty'].replace(['Below Poverty', '<= $75,000, Above 
 test_features_df['marital_status'].replace(['Not Married', 'Married'], [0, 1], inplace=True)
 test_features_df['rent_or_own'].replace(['Rent', 'Own'], [0, 1], inplace=True)
 test_features_df['employment_status'].replace(['Not in Labor Force', 'Unemployed', 'Employed'], [0, 1, 2], inplace=True)
+# test_features_df['hhs_geo_region'].replace(
+#     ['atmpeygn', 'bhuqouqj', 'dqpwygqj', 'fpwskwrf', 'kbazzjca', 'lrircsnp', 'lzgpxyit', 'mlyzmhmf', 'oxchjgsf',
+#      'qufhixun'], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], inplace=True)
 test_features_df['census_msa'].replace(['Non-MSA', 'MSA, Not Principle  City', 'MSA, Principle City'], [0, 1, 2],
                                        inplace=True)
 
