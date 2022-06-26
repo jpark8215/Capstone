@@ -1,7 +1,6 @@
 # import
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression

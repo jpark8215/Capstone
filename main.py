@@ -1,3 +1,5 @@
+# Jieun Park 001216539
+
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
